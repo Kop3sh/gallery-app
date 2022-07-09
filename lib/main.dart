@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bloc_course/bloc/bloc_actions.dart';
+import 'package:bloc_course/bloc/person.dart';
+import 'package:bloc_course/bloc/persons_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:developer' as devtools show log;
@@ -25,99 +28,12 @@ void main() {
   );
 }
 
-@immutable
-abstract class LoadAction {
-  const LoadAction();
-}
-
-@immutable
-class LoadPersonsAction implements LoadAction {
-  final PersonUrl url;
-
-  const LoadPersonsAction({required this.url}) : super();
-}
-
-@immutable
-class Person {
-  final String name;
-  final int age;
-
-  const Person({
-    required this.name,
-    required this.age,
-  });
-
-  Person.fromJson(Map<String, dynamic> json)
-      : name = json['name'] as String,
-        age = json['age'] as int;
-  @override
-  String toString() => 'Person (name: $name, age: $age)';
-}
-
-enum PersonUrl {
-  persons1,
-  persons2,
-}
-
-extension UrlStrin on PersonUrl {
-  String get urlString {
-    switch (this) {
-      case PersonUrl.persons1:
-        // return 'http://127.0.0.1:5500/api/persons1.json';
-        return 'http://10.0.2.2:5500/api/persons1.json';
-      case PersonUrl.persons2:
-        // return 'http://127.0.0.1:5500/api/persons2.json';
-        return 'http://10.0.2.2:5500/api/persons2.json';
-    }
-  }
-}
-
 Future<Iterable<Person>> getPersons(String url) => HttpClient()
     .getUrl(Uri.parse(url))
     .then((req) => req.close())
     .then((resp) => resp.transform(utf8.decoder).join())
     .then((str) => json.decode(str) as List<dynamic>)
     .then((list) => list.map((e) => Person.fromJson(e)));
-
-@immutable
-class FetchReuslt {
-  final Iterable<Person> persons;
-  final bool isRetrievedFromCache;
-
-  const FetchReuslt({
-    required this.persons,
-    required this.isRetrievedFromCache,
-  });
-
-  @override
-  String toString() =>
-      'Fetch Result (isRetrievedFromCache = $isRetrievedFromCache, persons= $persons';
-}
-
-class PersonsBloc extends Bloc<LoadAction, FetchReuslt?> {
-  final Map<PersonUrl, Iterable<Person>> _cache = {};
-  PersonsBloc() : super(null) {
-    on<LoadPersonsAction>(
-      (event, emit) async {
-        final url = event.url;
-        if (_cache.containsKey(url)) {
-          final cachedPersons = _cache[url]!;
-          final result = FetchReuslt(
-            persons: cachedPersons,
-            isRetrievedFromCache: true,
-          );
-          emit(result);
-        } else {
-          final persons = await getPersons(url.urlString);
-          _cache[url] = persons;
-          final result =
-              FetchReuslt(persons: persons, isRetrievedFromCache: false);
-          emit(result);
-        }
-      },
-    );
-  }
-}
 
 extension Subscript<T> on Iterable<T> {
   T? operator [](int index) => length > index ? elementAt(index) : null;
@@ -140,7 +56,8 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   context.read<PersonsBloc>().add(
                         const LoadPersonsAction(
-                          url: PersonUrl.persons1,
+                          url: persons1Url,
+                          loader: getPersons,
                         ),
                       );
                 },
@@ -150,8 +67,7 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   context.read<PersonsBloc>().add(
                         const LoadPersonsAction(
-                          url: PersonUrl.persons2,
-                        ),
+                            url: persons2Url, loader: getPersons),
                       );
                 },
                 child: const Text('Load josn #2'),
