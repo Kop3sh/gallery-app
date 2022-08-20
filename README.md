@@ -1,4 +1,3 @@
-# bloc_course
 
 A new Flutter project.
 
@@ -14,3 +13,15 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## Screenshots
+
+
+![Alt text](/screenshots/home.png "Home Page")
+![Alt text](/screenshots/login.png "login page")
+![Alt text](/screenshots/register.png "Registration Page")
+
+![Alt text](/screenshots/actions.png "App actions")
+![Alt text](/screenshots/logout.png "log out dialog")
+![Alt text](/screenshots/delete_account.png "delete account dialog")
+
