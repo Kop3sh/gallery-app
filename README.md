@@ -1,18 +1,12 @@
 
-A new Flutter project.
+# Gallery APP
 
-## Getting Started
+## Description
 
-This project is a starting point for a Flutter application.
+Developed a gallery app with login feature to backup personal photos to the cloud.
+Using BLoC/ hooks approaches to handle app states and screens.
+In Addition to Firebase Auth, and Storage Solutions.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
 
 ## Screenshots
 
